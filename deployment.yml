@@ -1,0 +1,36 @@
+name: Telemetry Framework Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run diagnostics
+      run: |
+        python diagnostics.py &
+
+    - name: Send logs
+      run: |
+        python telemetry.py &
+
+    - name: Upload diagnostics log
+      run: |
+        python logs.py
